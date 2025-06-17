@@ -817,8 +817,8 @@
 
         function showGiftSelection() {
             quizForm.innerHTML = `
-      <h2>Выберите ваш подарок!</h2>
-      <div class="gifts-container" id="giftsContainer" aria-label="Подарки"></div>
+      <h2>Choose your gift!</h2>
+      <div class="gifts-container" id="giftsContainer" aria-label="Present"></div>
       <p id="giftMessage" style="color: #ffd700; margin-top: 1rem; font-weight: 600;" role="alert"></p>
     `;
             prevBtn.style.display = 'none';
@@ -839,7 +839,7 @@
                 giftDiv.setAttribute('role', 'button');
                 giftDiv.setAttribute('aria-pressed', 'false');
                 giftDiv.dataset.index = i;
-                giftDiv.textContent = `Подарок ${i + 1}`;
+                giftDiv.textContent = `Present ${i + 1}`;
                 giftsContainer.appendChild(giftDiv);
 
                 giftDiv.addEventListener('mouseenter', () => {
