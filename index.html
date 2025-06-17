@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pampers Promo</title>
+    <title>Pampers Diaper Set</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
         * {
@@ -166,6 +166,8 @@
             box-shadow: 0 0 15px rgba(0, 163, 163, 0.8);
             font-weight: 600;
             font-size: 1.1rem;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal h2 {
@@ -252,14 +254,97 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        .final-screen {
-            text-align: center;
+        /* Подарки */
+        .gifts-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
         }
 
-        .final-screen img {
-            max-width: 150px;
-            margin: 1rem auto;
-            display: block;
+        .gift {
+            background: #007575;
+            border-radius: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            user-select: none;
+            box-shadow: 0 0 10px #00999988;
+        }
+
+        .gift img {
+            max-height: 80px;
+            max-width: 80px;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .gift:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Форма после подарков */
+        .gift-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .gift-form label {
+            font-weight: 600;
+        }
+
+        .gift-form input {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .gift-form button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #ffd700;
+            color: #004040;
+            font-weight: 700;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+
+        .gift-form button:hover {
+            background-color: #e6c200;
+        }
+
+        /* Сообщение спасибо */
+        .thank-you {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 2rem 1rem;
         }
 
         @media (max-width: 768px) {
@@ -310,6 +395,10 @@
 
             .carousel-image {
                 height: auto;
+            }
+
+            .gifts-container {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -371,7 +460,9 @@
         </div>
     </div>
 
+
     <script>
+        // Меню бургер
         const burger = document.getElementById('burger');
         const nav = document.getElementById('nav-menu');
         const burgerIcon = document.getElementById('burger-icon');
@@ -410,7 +501,7 @@
         }
         setInterval(slideCarousel, 3000);
 
-        // Квиз
+        // Квиз и подарки
         const startBtn = document.getElementById('startBtn');
         const modalOverlay = document.getElementById('modalOverlay');
         const quizForm = document.getElementById('quizForm');
@@ -418,72 +509,143 @@
         const nextBtn = document.getElementById('nextBtn');
 
         const questions = [
-            { question: "How old is your baby?", options: ["Not born yet", "0–6 months", "6+ months"] },
-            { question: "Is this your first child?", options: ["Yes", "No"] },
-            { question: "How many children are in your family?", options: ["One", "Two", "Three or more"] },
-            { question: "What diaper size do you currently use?", options: ["Size 1", "Size 2–3", "Size 4 or above"] },
-            { question: "What matters most when choosing diapers?", options: ["Comfort and softness", "Leak protection", "Ease of use"] },
-            { question: "Would you like to receive a plush toy as a gift?", options: ["Yes", "No"] }
+            { question: "How old is your baby?", options: ["0-3 months", "3-6 months", "6-12 months", "12+ months"] },
+            { question: "What size diaper do you use?", options: ["Newborn", "Size 1", "Size 2", "Size 3+"] },
+            { question: "How often do you change diapers per day?", options: ["Less than 5", "5-8", "More than 8"] }
         ];
 
         let currentQuestionIndex = 0;
         let answers = new Array(questions.length).fill(null);
 
         function renderQuestion(index) {
-            quizForm.innerHTML = '';
             const q = questions[index];
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question';
-            questionDiv.innerHTML = `<p>${q.question}</p>`;
-            const optionsDiv = document.createElement('div');
-            optionsDiv.className = 'options';
-
-            q.options.forEach((opt, i) => {
-                const id = `q${index}_opt${i}`;
-                const label = document.createElement('label');
-                label.className = 'option-label';
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = `question${index}`;
-                input.id = id;
-                input.value = opt;
-                if (answers[index] === opt) input.checked = true;
-                const span = document.createElement('span');
-                span.textContent = opt;
-                label.appendChild(input);
-                label.appendChild(span);
-                optionsDiv.appendChild(label);
+            let html = `<div class="question"><p>${q.question}</p><div class="options">`;
+            q.options.forEach((option, i) => {
+                const checked = answers[index] === i ? 'checked' : '';
+                html += `
+                    <label class="option-label">
+                        <input type="radio" name="question${index}" value="${i}" ${checked} />
+                        <span>${option}</span>
+                    </label>`;
             });
-
-            questionDiv.appendChild(optionsDiv);
-            quizForm.appendChild(questionDiv);
+            html += `</div></div>`;
+            quizForm.innerHTML = html;
             prevBtn.disabled = index === 0;
-            nextBtn.textContent = (index === questions.length - 1) ? 'Finish' : 'Next';
+            nextBtn.textContent = index === questions.length - 1 ? 'Finish' : 'Next';
         }
 
         function saveAnswer() {
-            const selected = quizForm.querySelector('input[type="radio"]:checked');
-            if (selected) {
-                answers[currentQuestionIndex] = selected.value;
-                return true;
+            const options = quizForm.querySelectorAll('input[type="radio"]');
+            for (const option of options) {
+                if (option.checked) {
+                    answers[currentQuestionIndex] = parseInt(option.value);
+                    return true;
+                }
             }
             return false;
         }
 
-        function showFinalScreen() {
+        function showGiftSelection() {
             quizForm.innerHTML = `
-      <div class="final-screen">
-        <h2>Thank you for completing the quiz!</h2>
-        <p>Here is your gift:</p>
-        <img src="./img/pngwing.com.png" alt="Plush Bear" />
-        <button type="button" class="btn btn-primary" id="closeModalBtn" style="margin-top: 1.5rem;">Close</button>
-      </div>
-    `;
+                <h2>Выберите ваш подарок!</h2>
+                <div class="gifts-container" id="giftsContainer" aria-label="Подарки">
+                </div>
+                <p id="giftMessage" style="color: #ffd700; margin-top: 1rem; font-weight: 600;" role="alert"></p>
+            `;
             prevBtn.style.display = 'none';
             nextBtn.style.display = 'none';
-            document.getElementById('closeModalBtn').addEventListener('click', () => {
-                modalOverlay.classList.remove('active');
-                document.activeElement.blur();
+
+            const giftsContainer = document.getElementById('giftsContainer');
+            const giftCount = 8;
+            const correctIndex = Math.floor(Math.random() * giftCount);
+
+            for (let i = 0; i < giftCount; i++) {
+                const giftDiv = document.createElement('div');
+                giftDiv.classList.add('gift');
+                giftDiv.setAttribute('tabindex', '0');
+                giftDiv.setAttribute('role', 'button');
+                giftDiv.setAttribute('aria-pressed', 'false');
+                giftDiv.dataset.index = i;
+
+                // Здесь можно вставить реальные картинки подарков.
+                // Для примера используем текст:
+                giftDiv.textContent = `Подарок ${i + 1}`;
+
+                // Можно вставить картинку, если есть:
+                // giftDiv.innerHTML = `<img src="path_to_gift_${i + 1}.png" alt="Подарок ${i + 1}">`;
+
+                giftsContainer.appendChild(giftDiv);
+
+                giftDiv.addEventListener('mouseenter', () => {
+                    giftDiv.style.transform = 'scale(1.1)';
+                });
+                giftDiv.addEventListener('mouseleave', () => {
+                    giftDiv.style.transform = 'scale(1)';
+                });
+
+                giftDiv.addEventListener('click', () => {
+                    if (parseInt(giftDiv.dataset.index) === correctIndex) {
+                        document.getElementById('giftMessage').textContent = 'Congratulations! This is your gift - a teddy bear 🧸. Please fill out the form below:';
+                        showUserForm();
+                    } else {
+                        document.getElementById('giftMessage').textContent = 'Oops! It`s not a teddy bear. Try again.';
+                        giftDiv.style.animation = 'shake 0.5s';
+                        giftDiv.addEventListener('animationend', () => {
+                            giftDiv.style.animation = '';
+                        }, { once: true });
+                    }
+                });
+
+                // Для доступа с клавиатуры
+                giftDiv.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        giftDiv.click();
+                    }
+                });
+            }
+
+            // Запускаем анимацию появления
+            setTimeout(() => {
+                giftsContainer.style.opacity = '1';
+                giftsContainer.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        function showUserForm() {
+            const modal = document.querySelector('.modal');
+            modal.style.maxHeight = 'none';
+            quizForm.insertAdjacentHTML('beforeend', `
+                <form id="userForm" class="gift-form" novalidate>
+                    <input type="text" id="firstName" name="firstName" placeholder="Имя" required />
+                    <input type="text" id="lastName" name="lastName" placeholder="Фамилия" required />
+                    <input type="tel" id="phone" name="phone" placeholder="Телефон" required pattern="\\+?\\d{10,15}" />
+                    <input type="email" id="email" name="email" placeholder="Email" required />
+                    <button type="submit">Отправить</button>
+                </form>
+                <p id="formMessage" role="alert" style="margin-top: 1rem; color: #ffd700; font-weight: 600;"></p>
+            `);
+
+            const userForm = document.getElementById('userForm');
+            const formMessage = document.getElementById('formMessage');
+
+            userForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Простая валидация
+                if (!userForm.checkValidity()) {
+                    formMessage.textContent = 'Please fill in all fields correctly.';
+                    return;
+                }
+
+                // Можно добавить отправку на сервер здесь
+                formMessage.textContent = 'Thank you! Your data has been sent successfully.';
+
+                userForm.reset();
+
+                setTimeout(() => {
+                    modalOverlay.classList.remove('active');
+                }, 2000);
             });
         }
 
@@ -493,6 +655,7 @@
             answers = new Array(questions.length).fill(null);
             prevBtn.style.display = 'inline-block';
             nextBtn.style.display = 'inline-block';
+            prevBtn.disabled = true;
             renderQuestion(currentQuestionIndex);
         });
 
@@ -505,17 +668,214 @@
 
         nextBtn.addEventListener('click', () => {
             if (!saveAnswer()) {
-                alert('Please select an option to continue.');
+                alert('Please select an answer option to continue.');
                 return;
             }
             if (currentQuestionIndex < questions.length - 1) {
                 currentQuestionIndex++;
                 renderQuestion(currentQuestionIndex);
             } else {
-                showFinalScreen();
+                showGiftSelection();
             }
         });
+
+        // Анимация для неправильного подарка
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0% { transform: translateX(0); }
+                20% { transform: translateX(-8px); }
+                40% { transform: translateX(8px); }
+                60% { transform: translateX(-8px); }
+                80% { transform: translateX(8px); }
+                100% { transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
+    <!-- Вставь этот блок сразу перед закрывающим </body> -->
+    <div class="gift-form-modal-overlay" id="giftFormModal" role="dialog" aria-modal="true"
+        aria-labelledby="giftFormTitle" style="display:none;">
+        <div class="gift-form-modal">
+            <h2 id="giftFormTitle" style="text-align:center; color:#ffd700;">Поздравляем! Это ваш подарок — мишка 🧸
+            </h2>
+            <form id="userGiftForm" class="gift-form" novalidate>
+                <input type="text" id="firstNameGift" name="firstNameGift" placeholder="Имя" required />
+                <input type="text" id="lastNameGift" name="lastNameGift" placeholder="Фамилия" required />
+                <input type="tel" id="phoneGift" name="phoneGift" placeholder="Телефон" required
+                    pattern="\\+?\\d{10,15}" />
+                <input type="email" id="emailGift" name="emailGift" placeholder="Email" required />
+                <button type="submit">Отправить</button>
+                <button type="button" id="giftFormCloseBtn"
+                    style="margin-top:1rem; background:transparent; color:#ffd700; border:none; cursor:pointer;">Закрыть</button>
+            </form>
+            <p id="giftFormMessage" role="alert" style="margin-top: 1rem; color: #ffd700; font-weight: 600;"></p>
+        </div>
+    </div>
+
+    <style>
+        .gift-form-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .gift-form-modal {
+            background: #004040;
+            border-radius: 12px;
+            padding: 2rem 2.5rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 15px #00ffff;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .gift-form-modal input {
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .gift-form-modal button[type="submit"] {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #ffd700;
+            color: #004040;
+            font-weight: 700;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+
+        .gift-form-modal button[type="submit"]:hover {
+            background-color: #e6c200;
+        }
+
+        .gift-form-modal button#giftFormCloseBtn:hover {
+            color: #fff;
+        }
+    </style>
+
+    <script>
+        // Сохраняем элементы
+        const giftFormModal = document.getElementById('giftFormModal');
+        const userGiftForm = document.getElementById('userGiftForm');
+        const giftFormMessage = document.getElementById('giftFormMessage');
+        const giftFormCloseBtn = document.getElementById('giftFormCloseBtn');
+
+        // Функция показать модалку с формой подарка
+        function openGiftFormModal() {
+            giftFormMessage.textContent = '';
+            userGiftForm.reset();
+            giftFormModal.style.display = 'flex';
+        }
+
+        // Функция закрыть модалку
+        function closeGiftFormModal() {
+            giftFormModal.style.display = 'none';
+        }
+
+        // Обработчик закрытия по кнопке
+        giftFormCloseBtn.addEventListener('click', closeGiftFormModal);
+
+        // Обработчик сабмита формы подарка
+        userGiftForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (!userGiftForm.checkValidity()) {
+                giftFormMessage.textContent = 'Please fill in all fields correctly.';
+                return;
+            }
+
+            giftFormMessage.textContent = 'Thank you! Your data has been sent successfully.';
+
+            // Здесь можно отправить данные на сервер
+
+            userGiftForm.reset();
+
+            setTimeout(() => {
+                closeGiftFormModal();
+                modalOverlay.classList.remove('active'); // Закрываем главный модал с вопросами и подарками
+            }, 2000);
+        });
+
+        // --- Изменяем логику выбора подарка ---
+
+        function showGiftSelection() {
+            quizForm.innerHTML = `
+      <h2>Выберите ваш подарок!</h2>
+      <div class="gifts-container" id="giftsContainer" aria-label="Подарки"></div>
+      <p id="giftMessage" style="color: #ffd700; margin-top: 1rem; font-weight: 600;" role="alert"></p>
+    `;
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+
+            const giftsContainer = document.getElementById('giftsContainer');
+            const giftMessage = document.getElementById('giftMessage');
+            const giftCount = 8;
+            const correctIndex = Math.floor(Math.random() * giftCount);
+
+            giftsContainer.style.opacity = '0';
+            giftsContainer.style.transform = 'translateY(20px)';
+
+            for (let i = 0; i < giftCount; i++) {
+                const giftDiv = document.createElement('div');
+                giftDiv.classList.add('gift');
+                giftDiv.setAttribute('tabindex', '0');
+                giftDiv.setAttribute('role', 'button');
+                giftDiv.setAttribute('aria-pressed', 'false');
+                giftDiv.dataset.index = i;
+                giftDiv.textContent = `Подарок ${i + 1}`;
+                giftsContainer.appendChild(giftDiv);
+
+                giftDiv.addEventListener('mouseenter', () => {
+                    giftDiv.style.transform = 'scale(1.1)';
+                });
+                giftDiv.addEventListener('mouseleave', () => {
+                    giftDiv.style.transform = 'scale(1)';
+                });
+
+                giftDiv.addEventListener('click', () => {
+                    if (parseInt(giftDiv.dataset.index) === correctIndex) {
+                        giftMessage.textContent = ''; // убираем сообщение
+                        openGiftFormModal();
+                    } else {
+                        giftMessage.textContent = 'Oops! It`s not a teddy bear. Try again.';
+                        giftDiv.style.animation = 'shake 0.5s';
+                        giftDiv.addEventListener('animationend', () => {
+                            giftDiv.style.animation = '';
+                        }, { once: true });
+                    }
+                });
+
+                giftDiv.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        giftDiv.click();
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                giftsContainer.style.opacity = '1';
+                giftsContainer.style.transform = 'translateY(0)';
+            }, 100);
+        }
+    </script>
+
 </body>
 
 </html>
