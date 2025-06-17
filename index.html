@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pampers Promo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Nunito', sans-serif;
+            background: url('./img/photo_2025-06-17_14-06-15.jpg') no-repeat center center / cover;
+            color: white;
+        }
+
+        header {
+            width: 100%;
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            height: 55px;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: #e3f8f6;
+        }
+
+        .burger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .burger img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .promo {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .promo-text {
+            flex: 1 1 400px;
+        }
+
+        .promo-text h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .promo-text h3 {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .highlight {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .start-button {
+            margin-top: 2rem;
+            padding: 0.8rem 2rem;
+            background-color: #FFD700;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .start-button:hover {
+            background-color: #15948e;
+        }
+
+        .promo-carousel {
+            flex: 1 1 400px;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: #f9f9f9;
+        }
+
+        .carousel-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-image {
+            min-width: 100%;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: rgba(0, 163, 163, 0.95);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            padding: 2rem 2.5rem;
+            color: white;
+            box-shadow: 0 0 15px rgba(0, 163, 163, 0.8);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            text-align: center;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .question {
+            margin-bottom: 1.5rem;
+        }
+
+        .question p {
+            margin-bottom: 0.6rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .option-label {
+            background: #007575;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+        }
+
+        .option-label:hover {
+            background-color: #009999;
+        }
+
+        .option-label input {
+            display: none;
+        }
+
+        .option-label input:checked+span {
+            background-color: #ffd700;
+            color: #004040;
+            font-weight: 700;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.6rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn-primary {
+            background-color: #ffd700;
+            color: #004040;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6c200;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .final-screen {
+            text-align: center;
+        }
+
+        .final-screen img {
+            max-width: 150px;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 1rem;
+            }
+
+            nav {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 100%;
+                background: #43b7ac;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 50;
+            }
+
+            nav.open {
+                transform: translateX(0);
+            }
+
+            nav ul {
+                text-align: center;
+                flex-direction: column;
+                gap: 2rem;
+                font-size: 1.5rem;
+            }
+
+            .burger {
+                display: block;
+                z-index: 100;
+            }
+
+            .promo {
+                flex-direction: column;
+                padding: 2rem 1rem;
+            }
+
+            .promo-carousel {
+                width: 100%;
+                margin-top: 2rem;
+            }
+
+            .carousel-image {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="./img/White__1_.svg" alt="Logo" />
+            </div>
+            <nav id="nav-menu">
+                <ul>
+                    <li><a href="#home" onclick="closeMenu()">Home</a></li>
+                    <li><a href="#products" onclick="closeMenu()">Products</a></li>
+                    <li><a href="#about" onclick="closeMenu()">About Us</a></li>
+                </ul>
+            </nav>
+            <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+                <img src="./img/burger-menu.svg" alt="Menu" id="burger-icon" />
+            </button>
+        </div>
+    </header>
+
+    <section class="promo">
+        <div class="promo-text">
+            <h1>
+                Pampers Diaper Set <br />
+                <span class="highlight">Care from Day One!</span>
+            </h1>
+            <h3>
+                Get an exclusive Pampers kit designed for the comfortable care of your baby.<br />
+                Perfect for newborns and infants.<br /><br />
+                <strong>Includes:</strong> diapers, wet wipes, diaper cream, and a baby skincare guide
+                brochure.<br /><br />
+                <span class="highlight">Limited stock available – don’t miss your chance to get yours!</span>
+            </h3>
+            <button class="start-button" id="startBtn">GET STARTED</button>
+        </div>
+
+        <div class="promo-carousel">
+            <div class="carousel-wrapper" id="carousel-wrapper">
+                <img src="./img/продукт.jpg" class="carousel-image" alt="Pampers 1" />
+                <img src="./img/продукт.jpg" class="carousel-image" alt="Pampers 2" />
+                <img src="./img/продукт.jpg" class="carousel-image" alt="Pampers 3" />
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <h2 id="modalTitle">Please answer the questions</h2>
+            <form id="quizForm"></form>
+            <div class="buttons">
+                <button type="button" class="btn btn-secondary" id="prevBtn" disabled>Back</button>
+                <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const burger = document.getElementById('burger');
+        const nav = document.getElementById('nav-menu');
+        const burgerIcon = document.getElementById('burger-icon');
+
+        burger.addEventListener('click', () => {
+            const isOpen = nav.classList.toggle('open');
+            burger.setAttribute('aria-expanded', isOpen);
+            burgerIcon.src = isOpen ? './img/cross.svg' : './img/burger-menu.svg';
+            burgerIcon.alt = isOpen ? 'Close menu' : 'Open menu';
+        });
+
+        function closeMenu() {
+            nav.classList.remove('open');
+            burger.setAttribute('aria-expanded', false);
+            burgerIcon.src = './img/burger-menu.svg';
+            burgerIcon.alt = 'Open menu';
+        }
+
+        // Карусель
+        const carouselWrapper = document.getElementById('carousel-wrapper');
+        const images = carouselWrapper.querySelectorAll('.carousel-image');
+        const imageCount = images.length;
+        let currentIndex = 0;
+        carouselWrapper.appendChild(images[0].cloneNode(true));
+        function slideCarousel() {
+            currentIndex++;
+            carouselWrapper.style.transition = 'transform 0.5s ease-in-out';
+            carouselWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+            if (currentIndex === imageCount) {
+                setTimeout(() => {
+                    carouselWrapper.style.transition = 'none';
+                    carouselWrapper.style.transform = 'translateX(0)';
+                    currentIndex = 0;
+                }, 600);
+            }
+        }
+        setInterval(slideCarousel, 3000);
+
+        // Квиз
+        const startBtn = document.getElementById('startBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const quizForm = document.getElementById('quizForm');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        const questions = [
+            { question: "How old is your baby?", options: ["Not born yet", "0–6 months", "6+ months"] },
+            { question: "Is this your first child?", options: ["Yes", "No"] },
+            { question: "How many children are in your family?", options: ["One", "Two", "Three or more"] },
+            { question: "What diaper size do you currently use?", options: ["Size 1", "Size 2–3", "Size 4 or above"] },
+            { question: "What matters most when choosing diapers?", options: ["Comfort and softness", "Leak protection", "Ease of use"] },
+            { question: "Would you like to receive a plush toy as a gift?", options: ["Yes", "No"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        function renderQuestion(index) {
+            quizForm.innerHTML = '';
+            const q = questions[index];
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `<p>${q.question}</p>`;
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
+
+            q.options.forEach((opt, i) => {
+                const id = `q${index}_opt${i}`;
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `question${index}`;
+                input.id = id;
+                input.value = opt;
+                if (answers[index] === opt) input.checked = true;
+                const span = document.createElement('span');
+                span.textContent = opt;
+                label.appendChild(input);
+                label.appendChild(span);
+                optionsDiv.appendChild(label);
+            });
+
+            questionDiv.appendChild(optionsDiv);
+            quizForm.appendChild(questionDiv);
+            prevBtn.disabled = index === 0;
+            nextBtn.textContent = (index === questions.length - 1) ? 'Finish' : 'Next';
+        }
+
+        function saveAnswer() {
+            const selected = quizForm.querySelector('input[type="radio"]:checked');
+            if (selected) {
+                answers[currentQuestionIndex] = selected.value;
+                return true;
+            }
+            return false;
+        }
+
+        function showFinalScreen() {
+            quizForm.innerHTML = `
+      <div class="final-screen">
+        <h2>Thank you for completing the quiz!</h2>
+        <p>Here is your gift:</p>
+        <img src="./img/pngwing.com.png" alt="Plush Bear" />
+        <button type="button" class="btn btn-primary" id="closeModalBtn" style="margin-top: 1.5rem;">Close</button>
+      </div>
+    `;
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                modalOverlay.classList.remove('active');
+                document.activeElement.blur();
+            });
+        }
+
+        startBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+            currentQuestionIndex = 0;
+            answers = new Array(questions.length).fill(null);
+            prevBtn.style.display = 'inline-block';
+            nextBtn.style.display = 'inline-block';
+            renderQuestion(currentQuestionIndex);
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion(currentQuestionIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (!saveAnswer()) {
+                alert('Please select an option to continue.');
+                return;
+            }
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion(currentQuestionIndex);
+            } else {
+                showFinalScreen();
+            }
+        });
+    </script>
+</body>
+
+</html>
