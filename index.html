@@ -547,8 +547,8 @@
 
         function showGiftSelection() {
             quizForm.innerHTML = `
-                <h2>Выберите ваш подарок!</h2>
-                <div class="gifts-container" id="giftsContainer" aria-label="Подарки">
+                <h2>Choose your gift!</h2>
+                <div class="gifts-container" id="giftsContainer" aria-label="Present">
                 </div>
                 <p id="giftMessage" style="color: #ffd700; margin-top: 1rem; font-weight: 600;" role="alert"></p>
             `;
@@ -701,9 +701,9 @@
                 teddy bear 🧸
             </h2>
             <form id="userGiftForm" class="gift-form" novalidate>
-                <input type="text" id="firstNameGift" name="firstNameGift" placeholder="Имя" required />
-                <input type="text" id="lastNameGift" name="lastNameGift" placeholder="Фамилия" required />
-                <input type="tel" id="phoneGift" name="phoneGift" placeholder="Телефон" required
+                <input type="text" id="firstNameGift" name="firstNameGift" placeholder="Name" required />
+                <input type="text" id="lastNameGift" name="lastNameGift" placeholder="Surname" required />
+                <input type="tel" id="phoneGift" name="phoneGift" placeholder="Telephone" required
                     pattern="\\+?\\d{10,15}" />
                 <input type="email" id="emailGift" name="emailGift" placeholder="Email" required />
                 <button type="submit">Send</button>
