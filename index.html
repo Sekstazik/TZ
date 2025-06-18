@@ -405,7 +405,6 @@
 </head>
 
 <body>
-
     <header>
         <div class="header-container">
             <div class="logo">
@@ -425,6 +424,12 @@
     </header>
 
     <section class="promo">
+        <div class="gift-box" aria-label="Gift box with teddy bear" role="img" tabindex="0" style="display:none;">
+            <img src="./img/box-bottom.png" alt="Box bottom" class="box-bottom" />
+            <img src="./img/box-lid.png" alt="Box lid" class="box-lid" />
+            <img src="./img/teddy.png" alt="Teddy bear" class="teddy" />
+        </div>
+
         <div class="promo-text">
             <h1>
                 Pampers Diaper Set <br />
@@ -707,8 +712,6 @@
                     pattern="\\+?\\d{10,15}" />
                 <input type="email" id="emailGift" name="emailGift" placeholder="Email" required />
                 <button type="submit">Send</button>
-                <button type="button" id="giftFormCloseBtn"
-                    style="margin-top:1rem; background:transparent; color:#ffd700; border:none; cursor:pointer;">Close</button>
             </form>
             <p id="giftFormMessage" role="alert" style="margin-top: 1rem; color: #ffd700; font-weight: 600;"></p>
         </div>
@@ -768,6 +771,41 @@
         .gift-form-modal button#giftFormCloseBtn:hover {
             color: #fff;
         }
+
+        .gifts-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 2rem;
+        }
+
+        .gift-box {
+            position: relative;
+            width: 100px;
+            height: 120px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-box .lid {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            transition: top 0.3s ease;
+            z-index: 2;
+        }
+
+        .gift-box .lid.open {
+            top: -50px;
+        }
+
+        .gift-box .box {
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
     </style>
 
     <script>
@@ -788,9 +826,6 @@
         function closeGiftFormModal() {
             giftFormModal.style.display = 'none';
         }
-
-        // Обработчик закрытия по кнопке
-        giftFormCloseBtn.addEventListener('click', closeGiftFormModal);
 
         // Обработчик сабмита формы подарка
         userGiftForm.addEventListener('submit', (e) => {
@@ -817,31 +852,34 @@
 
         function showGiftSelection() {
             quizForm.innerHTML = `
-      <h2>Choose your gift!</h2>
-      <div class="gifts-container" id="giftsContainer" aria-label="Present"></div>
-      <p id="giftMessage" style="color: #ffd700; margin-top: 1rem; font-weight: 600;" role="alert"></p>
+        <h2>Choose your gift!</h2>
+        <div class="gifts-container" id="giftsContainer" aria-label="Present"></div>
+        <p id="giftMessage" style="color: #ffd700; margin-top: 1rem; font-weight: 600;" role="alert"></p>
     `;
             prevBtn.style.display = 'none';
             nextBtn.style.display = 'none';
 
             const giftsContainer = document.getElementById('giftsContainer');
-            const giftMessage = document.getElementById('giftMessage');
             const giftCount = 8;
-            const correctIndex = Math.floor(Math.random() * giftCount);
-
-            giftsContainer.style.opacity = '0';
-            giftsContainer.style.transform = 'translateY(20px)';
+            let attempts = 0;
+            const maxAttempts = 3;
 
             for (let i = 0; i < giftCount; i++) {
                 const giftDiv = document.createElement('div');
-                giftDiv.classList.add('gift');
+                giftDiv.classList.add('gift-box');
                 giftDiv.setAttribute('tabindex', '0');
                 giftDiv.setAttribute('role', 'button');
                 giftDiv.setAttribute('aria-pressed', 'false');
                 giftDiv.dataset.index = i;
-                giftDiv.textContent = `Present ${i + 1}`;
+
+                giftDiv.innerHTML = `
+            <img src="./img/lid.png" alt="Крышка" class="lid">
+            <img src="./img/box.png" alt="Коробка" class="box">
+        `;
+
                 giftsContainer.appendChild(giftDiv);
 
+                // Hover animation (scale effect)
                 giftDiv.addEventListener('mouseenter', () => {
                     giftDiv.style.transform = 'scale(1.1)';
                 });
@@ -850,11 +888,29 @@
                 });
 
                 giftDiv.addEventListener('click', () => {
-                    if (parseInt(giftDiv.dataset.index) === correctIndex) {
-                        giftMessage.textContent = ''; // убираем сообщение
-                        openGiftFormModal();
+                    if (attempts >= maxAttempts || giftDiv.classList.contains('disabled')) return;
+
+                    const lid = giftDiv.querySelector('.lid');
+                    lid.classList.add('open');
+
+                    // Закрыть крышку через 1.5 сек
+                    setTimeout(() => {
+                        lid.classList.remove('open');
+                    }, 1500);
+
+                    giftDiv.classList.add('disabled');
+                    giftDiv.style.pointerEvents = 'none';
+                    giftDiv.style.opacity = '0.5';
+
+                    attempts++;
+
+                    if (attempts === 3) {
+                        document.getElementById('giftMessage').textContent =
+                            'Congratulations! This is your gift - a teddy bear 🧸. Please fill out the form below:';
+                        showGiftModal();
                     } else {
-                        giftMessage.textContent = 'Oops! It`s not a teddy bear. Try again.';
+                        document.getElementById('giftMessage').textContent =
+                            `Oops! It's not a teddy bear. Try again. Attempts left: ${maxAttempts - attempts}`;
                         giftDiv.style.animation = 'shake 0.5s';
                         giftDiv.addEventListener('animationend', () => {
                             giftDiv.style.animation = '';
@@ -875,6 +931,34 @@
                 giftsContainer.style.transform = 'translateY(0)';
             }, 100);
         }
+
+        function showGiftModal() {
+            const giftModal = document.getElementById('giftFormModal');
+            const userGiftForm = document.getElementById('userGiftForm');
+            const giftFormMessage = document.getElementById('giftFormMessage');
+
+            giftModal.style.display = 'flex';
+            giftFormMessage.textContent = '';
+
+            userGiftForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                if (!userGiftForm.checkValidity()) {
+                    giftFormMessage.textContent = 'Please fill in all fields correctly.';
+                    return;
+                }
+
+                giftFormMessage.textContent = 'Thank you! Your data has been sent successfully.';
+                userGiftForm.reset();
+
+                setTimeout(() => {
+                    giftModal.style.display = 'none';
+                    modalOverlay.classList.remove('active');
+                }, 2000);
+            }, { once: true }); // `once: true` чтобы обработчик не дублировался при повторных открытиях
+        }
+
+
     </script>
 
 </body>
