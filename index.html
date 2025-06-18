@@ -1023,25 +1023,31 @@
                     attempts++;
 
                     if (attempts === 3) {
-                        // Сделаем текущую коробку снова непрозрачной
                         giftDiv.style.opacity = '1';
 
-                        // Создаём мишку, выглядывающего из коробки сверху
                         const bearInBox = document.createElement('img');
                         bearInBox.src = './img/pngwing.com.png';
                         bearInBox.alt = 'Teddy Bear';
                         bearInBox.style.position = 'absolute';
-                        bearInBox.style.bottom = '80px'; // выше коробки (настроено)
+                        bearInBox.style.bottom = '85px'; // чуть выше коробки
                         bearInBox.style.left = '50%';
                         bearInBox.style.transform = 'translateX(-50%)';
-                        bearInBox.style.zIndex = '1'; // за крышкой
-                        bearInBox.style.height = '50px'; // чуть меньше
-                        bearInBox.style.opacity = '1';
+                        bearInBox.style.zIndex = '1';
+                        bearInBox.style.height = '50px';
+                        bearInBox.style.opacity = '0';
+                        bearInBox.style.transition = 'opacity 0.5s ease, bottom 1s ease';
 
                         const boxImg = giftDiv.querySelector('.box');
                         giftDiv.insertBefore(bearInBox, boxImg);
 
-                        // Анимированный большой мишка
+                        requestAnimationFrame(() => {
+                            bearInBox.style.opacity = '1';
+                        });
+
+                        setTimeout(() => {
+                            bearInBox.style.bottom = '55px'; // вылезает почти полностью
+                        }, 1000);
+
                         const bigBear = document.createElement('img');
                         bigBear.src = './img/pngwing.com.png';
                         bigBear.alt = 'Teddy Bear';
