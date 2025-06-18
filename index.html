@@ -464,7 +464,38 @@
             </div>
         </div>
     </div>
+    <div class="attempts-modal-overlay" id="attemptsModal" role="alertdialog" aria-modal="true" style="display:none;">
+        <div class="attempts-modal">
+            <p id="attemptsMessage" style="color: #ffd700; font-weight: 600; font-size: 1.2rem; text-align: center;">
+            </p>
+            <button id="closeAttemptsBtn"
+                style="margin-top: 1rem; padding: 0.5rem 1rem; background:#ffd700; border:none; border-radius:8px; cursor:pointer;">OK</button>
+        </div>
+    </div>
 
+    <style>
+        .attempts-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+        }
+
+        .attempts-modal {
+            background: #004040;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 0 15px #00ffff;
+            color: #ffd700;
+            font-family: 'Nunito', sans-serif;
+        }
+    </style>
 
     <script>
         // Меню бургер
@@ -809,6 +840,22 @@
     </style>
 
     <script>
+
+        const attemptsModal = document.getElementById('attemptsModal');
+        const attemptsMessage = document.getElementById('attemptsMessage');
+        const closeAttemptsBtn = document.getElementById('closeAttemptsBtn');
+
+        function showAttemptsModal(message) {
+            attemptsMessage.textContent = message;
+            attemptsModal.style.display = 'flex';
+        }
+
+        function closeAttemptsModal() {
+            attemptsModal.style.display = 'none';
+        }
+
+        closeAttemptsBtn.addEventListener('click', closeAttemptsModal);
+
         // Сохраняем элементы
         const giftFormModal = document.getElementById('giftFormModal');
         const userGiftForm = document.getElementById('userGiftForm');
@@ -893,7 +940,6 @@
                     const lid = giftDiv.querySelector('.lid');
                     lid.classList.add('open');
 
-                    // Закрыть крышку через 1.5 сек
                     setTimeout(() => {
                         lid.classList.remove('open');
                     }, 1500);
@@ -909,8 +955,8 @@
                             'Congratulations! This is your gift - a teddy bear 🧸. Please fill out the form below:';
                         showGiftModal();
                     } else {
-                        document.getElementById('giftMessage').textContent =
-                            `Oops! It's not a teddy bear. Try again. Attempts left: ${maxAttempts - attempts}`;
+                        const attemptsLeft = maxAttempts - attempts;
+                        showAttemptsModal(`Oops! It's not a teddy bear. Try again. Attempts left: ${attemptsLeft}`);
                         giftDiv.style.animation = 'shake 0.5s';
                         giftDiv.addEventListener('animationend', () => {
                             giftDiv.style.animation = '';
