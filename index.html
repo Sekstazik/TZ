@@ -1022,6 +1022,11 @@
 
                     attempts++;
 
+                    // Показываем модалку попыток, если попыток ещё меньше 3
+                    if (attempts < maxAttempts) {
+                        showAttemptsModal(`You have ${maxAttempts - attempts} attempt(s) left.`);
+                    }
+
                     if (attempts === 3) {
                         giftDiv.style.opacity = '1';
 
