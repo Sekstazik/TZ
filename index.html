@@ -145,11 +145,26 @@
             width: 100vw;
             height: 100vh;
             background: rgba(0, 0, 0, 0.7);
-            display: none;
+
+            opacity: 0;
+            visibility: hidden;
+
+            /* для центрирования */
+            display: flex;
             align-items: center;
             justify-content: center;
+
             z-index: 999;
             padding: 1rem;
+
+            /* плавный переход */
+            transition: opacity 1.3s ease, visibility 1.3s ease;
+        }
+
+        /* класс для активного состояния */
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         .modal-overlay.active {
@@ -347,6 +362,8 @@
             padding: 2rem 1rem;
         }
 
+
+
         @media (max-width: 768px) {
             .header-container {
                 padding: 1rem;
@@ -527,6 +544,15 @@
             justify-content: center;
             align-items: center;
             z-index: 1100;
+
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.3s ease;
+        }
+
+        .attempts-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         .attempts-modal {
@@ -890,11 +916,24 @@
 
         function showAttemptsModal(message) {
             attemptsMessage.textContent = message;
-            attemptsModal.style.display = 'flex';
+            attemptsModal.style.display = 'flex';  // показываем сразу, чтобы был элемент виден для анимации
+            // Немного задерживаем добавление класса, чтобы браузер успел применить display
+            requestAnimationFrame(() => {
+                attemptsModal.classList.add('active');
+            });
         }
 
         function closeAttemptsModal() {
-            attemptsModal.style.display = 'none';
+            attemptsModal.classList.remove('active');
+            // Ждём окончания анимации, чтобы скрыть display
+            attemptsModal.addEventListener('transitionend', onTransitionEnd);
+        }
+
+        function onTransitionEnd(event) {
+            if (event.propertyName === 'opacity' && !attemptsModal.classList.contains('active')) {
+                attemptsModal.style.display = 'none';
+                attemptsModal.removeEventListener('transitionend', onTransitionEnd);
+            }
         }
 
         closeAttemptsBtn.addEventListener('click', closeAttemptsModal);
